@@ -61,7 +61,7 @@ def get_relationships(site, id_list, token):
     return response.json()
 
 
-def post_toot(site, content, visibility, token, local_only=False):
+def post_toot(site, content, visibility, token, spoiler_text=None, local_only=False):
     url = 'https://' + site + API_PUBLISH_TOOT
     headers = {
         'Authorization': f'Bearer {token}',
@@ -72,6 +72,8 @@ def post_toot(site, content, visibility, token, local_only=False):
         'visibility': visibility,
         'local_only': True,
     }
+    if spoiler_text is not None:
+        payload['spoiler_text'] = spoiler_text
     if not local_only:
         del payload['local_only']
     response = post(url, headers=headers, data=payload)

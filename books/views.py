@@ -455,15 +455,18 @@ def update_review(request, id):
                     visibility = TootVisibilityEnum.PRIVATE
                 else:
                     visibility = TootVisibilityEnum.UNLISTED
+                url0 = "https://" + request.get_host() + reverse("books:retrieve",
+                                                                args=[form.instance.book.id])
                 url = "https://" + request.get_host() + reverse("books:retrieve_review",
                                                                 args=[form.instance.id])
-                words = "发布了关于" + f"《{form.instance.book.title}》" + "的评论"
+                spoiler = f"{form.cleaned_data['title']} - 关于《{form.instance.book.title}》的评论 - {settings.CLIENT_NAME}"
                 # tags = settings.MASTODON_TAGS % {'category': '书', 'type': '评论'}
                 tags = ''
-                content = words + '\n' + url + \
-                    '\n' + form.cleaned_data['title'] + '\n' + tags
+                content = '\n\n条目: ' + url0 + '\n评论: ' + url + \
+                    '\n' + tags
+                content = form.cleaned_data['content'] + content
                 response = post_toot(
-                    request.user.mastodon_site, content, visibility, request.session['oauth_token'])
+                    request.user.mastodon_site, content, visibility, request.session['oauth_token'], spoiler)
                 if response.status_code != 200:
                     mastodon_logger.error(f"CODE:{response.status_code} {response.text}")
                     return HttpResponseServerError("publishing mastodon status failed")
