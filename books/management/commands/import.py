@@ -27,11 +27,13 @@ class Command(BaseCommand):
                     try:
                         DoubanBookScraper.scrape(url)
                         DoubanBookScraper.save(request_user)
+                        self.stdout.write("Saved " + url)
                     except Exception:
                         try:
                             self.stdout.write(self.style.WARNING('Retry'))
                             DoubanBookScraper.scrape(url)
                             DoubanBookScraper.save(request_user)
+                            self.stdout.write("Saved " + url)
                         except Exception:
                             self.stdout.write(self.style.ERROR('Failed'))
         self.stdout.write(self.style.SUCCESS('Success'))
